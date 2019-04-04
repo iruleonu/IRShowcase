@@ -1,5 +1,7 @@
 # Showcase
 
+[![Build Status](https://travis-ci.org/iruleonu/IRShowcase.svg)](https://travis-ci.org/iruleonu/IRShowcase)
+
 Showcase of a native app fetching random posts list and the full post details (with comments) after clicking on a specific post. 
 Feed data is grabbed from [here](http://jsonplaceholder.typicode.com/posts).
 
