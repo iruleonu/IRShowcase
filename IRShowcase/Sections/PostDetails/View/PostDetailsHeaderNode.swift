@@ -8,11 +8,13 @@
 
 import Foundation
 import AsyncDisplayKit
+import ReactiveSwift
 
 final class PostDetailsHeaderNode: ASCellNode {
     let nameNode: ASTextNode
     let usernameNode: ASTextNode
     let emailNode: ASTextNode
+    private let disposables: CompositeDisposable
     
     struct NDesign {
         static let size: CGSize = CGSize(width: 0, height: 150)
@@ -23,8 +25,21 @@ final class PostDetailsHeaderNode: ASCellNode {
         nameNode = PostDetailsHeaderNode.setupNameNode(text: vm.posterName)
         usernameNode = PostDetailsHeaderNode.setupUsernameNode(text: vm.posterUsername)
         emailNode = PostDetailsHeaderNode.setupEmailNode(text: vm.posterEmail)
+        disposables = CompositeDisposable()
         super.init()
         automaticallyManagesSubnodes = true
+        setupBindings(viewModel: vm)
+    }
+    
+    deinit {
+        disposables.dispose()
+    }
+    
+    private func setupBindings(viewModel vm: PostDetailsViewModel) {
+        disposables += vm.refreshSupplementaryElementOfKind.signal.observeValues { [weak self] (_) in
+            self?.updateUI(viewModel: vm)
+            self?.setNeedsLayout()
+        }
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
@@ -35,6 +50,12 @@ final class PostDetailsHeaderNode: ASCellNode {
                                          children: [nameNode, usernameNode, emailNode])
         mainSpec.style.preferredSize = constrainedSize.max
         return ASInsetLayoutSpec(insets: NDesign.insets, child: mainSpec)
+    }
+    
+    private func updateUI(viewModel vm: PostDetailsViewModel) {
+        updateNameNodeText(vm.posterName)
+        updateUsernameNodeText(vm.posterUsername)
+        updateEmailNodeText(vm.posterEmail)
     }
     
     private static func setupNameNode(text: String) -> ASTextNode {
@@ -81,5 +102,29 @@ final class PostDetailsHeaderNode: ASCellNode {
         aux.placeholderEnabled = true
         
         return aux
+    }
+    
+    private func updateNameNodeText(_ text: String) {
+        let attr: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key.foregroundColor: UIColor.black,
+            NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14.0)
+        ]
+        nameNode.attributedText = NSAttributedString(string: text, attributes: attr)
+    }
+    
+    private func updateUsernameNodeText(_ text: String) {
+        let attr: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key.foregroundColor: UIColor.black,
+            NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14.0)
+        ]
+        usernameNode.attributedText = NSAttributedString(string: text, attributes: attr)
+    }
+    
+    private func updateEmailNodeText(_ text: String) {
+        let attr: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key.foregroundColor: UIColor.black,
+            NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14.0)
+        ]
+        emailNode.attributedText = NSAttributedString(string: text, attributes: attr)
     }
 }

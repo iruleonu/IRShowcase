@@ -8,11 +8,17 @@
 
 import Foundation
 import AsyncDisplayKit
+import ReactiveSwift
+
+enum PostDetailsSupplementaryElementOfKinds {
+    case header
+}
 
 protocol PostDetailsCollectionNodeDataSourceHeaderDetails {
     var posterName: String { get }
     var posterUsername: String { get }
     var posterEmail: String { get }
+    var refreshSupplementaryElementOfKind: MutableProperty<PostDetailsSupplementaryElementOfKinds> { get }
 }
 
 protocol PostDetailsCollectionNodeDataSourceProtocol: PostDetailsCollectionNodeDataSourceHeaderDetails {

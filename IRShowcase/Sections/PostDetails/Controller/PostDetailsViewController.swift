@@ -17,15 +17,15 @@ class PostDetailsViewController: ASViewController<PostDetailsNode> {
     private let viewModel: PostDetailsViewModel
     private let dataSource: PostDetailsCollectionNodeDataSource
     private var shouldThrottleWhilePerformingUpdates: MutableProperty<Bool>
-    private let performUpdatesSignal: Signal<(PostDetailsViewModelState.VMSharedState.DataSource, Bool), NoError>
-    private let performUpdatesObserver: Signal<(PostDetailsViewModelState.VMSharedState.DataSource, Bool), NoError>.Observer
+    private let performUpdatesSignal: Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError>
+    private let performUpdatesObserver: Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError>.Observer
     private var disposables = CompositeDisposable()
     
     init(viewModel vm: PostDetailsViewModel) {
         viewModel = vm
         dataSource = PostDetailsCollectionNodeDataSource(viewModel: vm)
         shouldThrottleWhilePerformingUpdates = MutableProperty(false)
-        (performUpdatesSignal, performUpdatesObserver) = Signal<(PostDetailsViewModelState.VMSharedState.DataSource, Bool), NoError>.pipe()
+        (performUpdatesSignal, performUpdatesObserver) = Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError>.pipe()
         let rootNode = PostDetailsNode(viewModel: vm)
         super.init(node: rootNode)
     }
@@ -73,14 +73,7 @@ class PostDetailsViewController: ASViewController<PostDetailsNode> {
         disposables += viewModel.outputs.dataSourceChanges
             .observeValues { [weak self] newState in
                 guard let strongSelf = self else { return }
-                strongSelf.performUpdatesObserver.send(value: (newState, false))
-        }
-        
-        disposables += viewModel.outputs.headerDataChanges
-            .observe(on: QueueScheduler.main)
-            .observeValues { [weak self] _ in
-                guard let strongSelf = self else { return }
-                strongSelf.performUpdatesObserver.send(value: (.empty, true))
+                strongSelf.performUpdatesObserver.send(value: newState)
         }
         
         disposables += viewModel.outputs.fetchedStuff
@@ -92,12 +85,8 @@ class PostDetailsViewController: ASViewController<PostDetailsNode> {
         
         disposables += performUpdatesSignal
             .throttle(while: shouldThrottleWhilePerformingUpdates, on: QueueScheduler.main)
-            .observeValues { [weak self] (newState, reloadSection) in
+            .observeValues { [weak self] newState in
                 guard let strongSelf = self else { return }
-                guard !reloadSection else {
-                    strongSelf.node.collectionNode.reloadSections(IndexSet(integer: 0))
-                    return
-                }
                 strongSelf.performUpdates(newState: newState, completion: nil)
         }
     }

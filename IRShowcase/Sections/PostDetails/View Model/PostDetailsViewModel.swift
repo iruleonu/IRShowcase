@@ -36,7 +36,6 @@ protocol PostDetailsViewModelOutputs {
     typealias FetchedStuffTuple = (Post?, User?, [Comment]?)
     var fetchedStuff: Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, NoError> { get }
     var dataSourceChanges: Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError> { get }
-    var headerDataChanges: Signal<Void, NoError> { get }
 }
 
 protocol PostDetailsViewModel: PostDetailsCollectionNodeDataSourceProtocol {
@@ -55,6 +54,7 @@ final class PostDetailsViewModelImpl: PostDetailsViewModel, PostDetailsViewModel
     private let fetchedUserProperty: MutableProperty<User?>
     private let fetchedCommentsProperty: MutableProperty<[Comment]?>
     private let connectivity: ConnectivityService
+    private var refreshSupplementaryElementProperty: MutableProperty<PostDetailsSupplementaryElementOfKinds>
     private var disposables = CompositeDisposable()
     
     var inputs: PostDetailsViewModelInputs { return self }
@@ -66,8 +66,6 @@ final class PostDetailsViewModelImpl: PostDetailsViewModel, PostDetailsViewModel
     private let fetchedStuffObserver: Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, NoError>.Observer
     var dataSourceChanges: Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError>
     private let dataSourceChangesObserver: Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError>.Observer
-    var headerDataChanges: Signal<(), NoError>
-    private let headerDataChangesObserver: Signal<(), NoError>.Observer
     
     let fetchPostAction: Action<(Int, DataProviderFetchType), ([Post], DataProviderSource, DataProviderFetchType), DataProviderError>
     let fetchCommentsAction: Action<(Int, DataProviderFetchType), ([Comment], DataProviderSource, DataProviderFetchType), DataProviderError>
@@ -84,13 +82,13 @@ final class PostDetailsViewModelImpl: PostDetailsViewModel, PostDetailsViewModel
         fetchedUserProperty = MutableProperty(nil)
         fetchedCommentsProperty = MutableProperty(nil)
         connectivity = c
+        refreshSupplementaryElementProperty = MutableProperty(.header)
         
         viewDidLoadProperty = MutableProperty(())
         fetchStuffProperty = MutableProperty(DataProviderFetchType.config)
         
         (fetchedStuff, fetchedStuffObserver) = Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, NoError>.pipe()
         (dataSourceChanges, dataSourceChangesObserver) = Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError>.pipe()
-        (headerDataChanges, headerDataChangesObserver) = Signal<(), NoError>.pipe()
         
         fetchPostAction = Action { PostDetailsViewModelImpl.fetchPostHandler(postId: $0.0, fetchType: $0.1, postDataProvider: pdp) }
         fetchCommentsAction = Action { PostDetailsViewModelImpl.fetchCommentsHandler(postId: $0.0, fetchType: $0.1, commentsDataProvider: cdp) }
@@ -298,7 +296,7 @@ final class PostDetailsViewModelImpl: PostDetailsViewModel, PostDetailsViewModel
             }
             
             fetchedUserProperty.value = user
-            headerDataChangesObserver.send(value: ())
+            refreshSupplementaryElementProperty.value = .header
         case .failure(let error):
             print(error.errorDescription)
             fetchedUserProperty.value = nil
@@ -354,5 +352,9 @@ extension PostDetailsViewModelImpl: PostDetailsCollectionNodeDataSourceHeaderDet
     
     var posterEmail: String {
         return vmState.value.0.user?.email ?? ""
+    }
+    
+    var refreshSupplementaryElementOfKind: MutableProperty<PostDetailsSupplementaryElementOfKinds> {
+        return refreshSupplementaryElementProperty
     }
 }
