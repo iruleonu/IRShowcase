@@ -9,7 +9,7 @@
 import Foundation
 
 public extension JSONDecoder {
-    public static func IRJSONDecoder() -> JSONDecoder {
+    static func IRJSONDecoder() -> JSONDecoder {
         let jsonDecoder = JSONDecoder()
         jsonDecoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
             let formatter = DateFormatter()

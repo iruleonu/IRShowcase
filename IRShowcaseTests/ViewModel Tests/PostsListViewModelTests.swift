@@ -11,6 +11,8 @@ import Quick
 import Nimble
 import SwiftyMocky
 import ReactiveSwift
+import enum Result.Result
+import enum Result.NoError
 
 @testable import IRShowcase
 
@@ -28,11 +30,11 @@ class PostsListViewModelTests: QuickSpec {
                 network = APIServiceMock()
                 persistence = PersistenceLayerMock()
                 connectivity = ConnectivityServiceMock()
-                connectivity.isReachableProperty = MutableProperty<Bool>(true)
                 let localConfig = DataProviderConfiguration.localOnly
                 let remoteConfig = DataProviderConfiguration.remoteOnly
                 let localDataProvider: DataProvider<[Post]> = DataProviderBuilder.makeDataProvider(config: localConfig, network: network, persistence: persistence)
                 let remoteDataProvider: DataProvider<[Post]> = DataProviderBuilder.makeDataProvider(config: remoteConfig, network: network, persistence: persistence)
+                Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(true)))
                 subject = PostsListViewModelImpl(routing: routing, localDataProvider: localDataProvider, remoteDataProvider: remoteDataProvider, connectivity: connectivity)
             }
             
@@ -43,9 +45,6 @@ class PostsListViewModelTests: QuickSpec {
             context("fetch stuff dance") {
                 it("should get posts after calling fetchStuff on the happy path") {
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
-                    Given(persistence, .fetchResource(.any, willReturn: SignalProducer<[Post], PersistenceLayerError>({ (observer, _) in
-                        observer.send(value: [Post(id: 0, userId: 0, title: "", body: "")])
-                    })))
                     Given(network, .fetchData(request: .any, willReturn: SignalProducer({ (observer, _) in
                         let posts: [Post] = Factory.arrayReponse(from: "posts", extension: "json")
                         var data: Data? = nil
@@ -60,6 +59,9 @@ class PostsListViewModelTests: QuickSpec {
                         } else {
                             observer.send(error: DataProviderError.parsing(error: DataProviderError.unknown))
                         }
+                    })))
+                    Given(persistence, .fetchResource(.any, willReturn: SignalProducer<[Post], PersistenceLayerError>({ (observer, _) in
+                        observer.send(value: [Post(id: 0, userId: 0, title: "", body: "")])
                     })))
                     
                     waitUntil(action: { (done) in
@@ -85,11 +87,7 @@ class PostsListViewModelTests: QuickSpec {
                 }
                 
                 it("should get posts after calling fetchStuff with an error from empty persistence") {
-                    Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(true)))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
-                    Given(persistence, .fetchResource(.any, willReturn: SignalProducer<[Post], PersistenceLayerError>({ (observer, _) in
-                        observer.send(error: PersistenceLayerError.persistence(error: NSError.error(withMessage: "should get a signal after calling fetchStuff Error")))
-                    })))
                     Given(network, .fetchData(request: .any, willReturn: SignalProducer({ (observer, _) in
                         let posts: [Post] = Factory.arrayReponse(from: "posts", extension: "json")
                         var data: Data? = nil
@@ -104,6 +102,9 @@ class PostsListViewModelTests: QuickSpec {
                         } else {
                             observer.send(error: DataProviderError.parsing(error: DataProviderError.unknown))
                         }
+                    })))
+                    Given(persistence, .fetchResource(.any, willReturn: SignalProducer<[Post], PersistenceLayerError>({ (observer, _) in
+                        observer.send(error: PersistenceLayerError.persistence(error: NSError.error(withMessage: "should get a signal after calling fetchStuff Error")))
                     })))
                     
                     waitUntil(action: { (done) in
@@ -129,13 +130,12 @@ class PostsListViewModelTests: QuickSpec {
                 }
                 
                 it("should get posts after calling fetchStuff with an error from the network") {
-                    Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(true)))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
-                    Given(persistence, .fetchResource(.any, willReturn: SignalProducer<[Post], PersistenceLayerError>({ (observer, _) in
-                        observer.send(value: [Post(id: 0, userId: 0, title: "", body: "")])
-                    })))
                     Given(network, .fetchData(request: .any, willReturn: SignalProducer({ (observer, _) in
                         observer.send(error: DataProviderError.parsing(error: DataProviderError.unknown))
+                    })))
+                    Given(persistence, .fetchResource(.any, willReturn: SignalProducer<[Post], PersistenceLayerError>({ (observer, _) in
+                        observer.send(value: [Post(id: 0, userId: 0, title: "", body: "")])
                     })))
                     
                     waitUntil(action: { (done) in
@@ -161,13 +161,12 @@ class PostsListViewModelTests: QuickSpec {
                 }
                 
                 it("should get a signal (failure) after calling fetchStuff with an error on both the persistence and network layer") {
-                    Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(true)))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
-                    Given(persistence, .fetchResource(.any, willReturn: SignalProducer<[Post], PersistenceLayerError>({ (observer, _) in
-                        observer.send(error: PersistenceLayerError.persistence(error: NSError.error(withMessage: "should get a signal after calling fetchStuff Error")))
-                    })))
                     Given(network, .fetchData(request: .any, willReturn: SignalProducer({ (observer, _) in
                         observer.send(error: DataProviderError.parsing(error: DataProviderError.unknown))
+                    })))
+                    Given(persistence, .fetchResource(.any, willReturn: SignalProducer<[Post], PersistenceLayerError>({ (observer, _) in
+                        observer.send(error: PersistenceLayerError.persistence(error: NSError.error(withMessage: "should get a signal after calling fetchStuff Error")))
                     })))
                     
                     waitUntil(action: { (done) in
@@ -207,13 +206,12 @@ class PostsListViewModelTests: QuickSpec {
             
             context("pulled down to refresh") {
                 it("should call fetch stuff") {
-                    Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(true)))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
-                    Given(persistence, .fetchResource(.any, willReturn: SignalProducer<[Post], PersistenceLayerError>({ (observer, _) in
-                        observer.send(error: PersistenceLayerError.persistence(error: NSError.error(withMessage: "should get a signal after calling fetchStuff Error")))
-                    })))
                     Given(network, .fetchData(request: .any, willReturn: SignalProducer({ (observer, _) in
                         observer.send(error: DataProviderError.parsing(error: DataProviderError.unknown))
+                    })))
+                    Given(persistence, .fetchResource(.any, willReturn: SignalProducer<[Post], PersistenceLayerError>({ (observer, _) in
+                        observer.send(error: PersistenceLayerError.persistence(error: NSError.error(withMessage: "should get a signal after calling fetchStuff Error")))
                     })))
                     
                     waitUntil(action: { (done) in
