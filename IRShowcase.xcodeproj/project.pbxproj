@@ -1009,6 +1009,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1064,6 +1065,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1086,7 +1088,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = github.iruleonu.IRShowcase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1109,7 +1110,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = github.iruleonu.IRShowcase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1133,10 +1133,9 @@
 					"@loader_path/Frameworks",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				OTHER_SWIFT_FLAGS = "-DMocky";
+				OTHER_SWIFT_FLAGS = "$(inherited) -DMocky";
 				PRODUCT_BUNDLE_IDENTIFIER = github.iruleonu.IRShowcaseTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IRShowcase.app/IRShowcase";
 			};
@@ -1161,10 +1160,9 @@
 					"@loader_path/Frameworks",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				OTHER_SWIFT_FLAGS = "-DMocky";
+				OTHER_SWIFT_FLAGS = "$(inherited) -DMocky";
 				PRODUCT_BUNDLE_IDENTIFIER = github.iruleonu.IRShowcaseTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IRShowcase.app/IRShowcase";
 			};
@@ -1229,6 +1227,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = UnitTests;
 		};
@@ -1250,7 +1249,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = github.iruleonu.IRShowcase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = UnitTests;
@@ -1274,10 +1272,9 @@
 					"@loader_path/Frameworks",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				OTHER_SWIFT_FLAGS = "-DMocky";
+				OTHER_SWIFT_FLAGS = "$(inherited) -DMocky";
 				PRODUCT_BUNDLE_IDENTIFIER = github.iruleonu.IRShowcaseTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IRShowcase.app/IRShowcase";
 			};

@@ -23,6 +23,8 @@ extension UICollectionView {
                 insertion.insert(Int(diff.currentIndex))
             case .move:
                 moving.append(diff)
+            @unknown default:
+                break
             }
         }
         
@@ -50,6 +52,8 @@ extension UICollectionView {
                 insertion.append(indexPath)
             case .move:
                 moving.append(diff)
+            @unknown default:
+                break
             }
         }
         

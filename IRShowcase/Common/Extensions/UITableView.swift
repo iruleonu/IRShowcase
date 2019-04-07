@@ -23,6 +23,8 @@ extension UITableView {
                 insertion.insert(Int(diff.currentIndex))
             case .move:
                 moving.append(diff)
+            @unknown default:
+                break
             }
         }
         
@@ -50,6 +52,8 @@ extension UITableView {
                 insertion.append(indexPath)
             case .move:
                 moving.append(diff)
+            @unknown default:
+                break
             }
         }
         

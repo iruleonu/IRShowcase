@@ -26,6 +26,8 @@ extension ASCollectionNode {
                 insertion.append(indexPath)
             case .move:
                 moving.append(diff)
+            @unknown default:
+                break
             }
         }
         
