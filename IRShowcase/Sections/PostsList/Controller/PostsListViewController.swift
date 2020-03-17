@@ -10,22 +10,21 @@ import Foundation
 import UIKit
 import AsyncDisplayKit
 import ReactiveSwift
-import enum Result.NoError
 import Doppelganger
 
 class PostsListViewController: ASViewController<PostListNode> {
     private let viewModel: PostsListViewModel
     private var dataSource: PostsListCollectionNodeDataSource
     private var shouldThrottleWhilePerformingUpdates: MutableProperty<Bool>
-    private let performUpdatesSignal: Signal<PostsListViewModelState.VMSharedState.DataSource, NoError>
-    private let performUpdatesObserver: Signal<PostsListViewModelState.VMSharedState.DataSource, NoError>.Observer
+    private let performUpdatesSignal: Signal<PostsListViewModelState.VMSharedState.DataSource, Never>
+    private let performUpdatesObserver: Signal<PostsListViewModelState.VMSharedState.DataSource, Never>.Observer
     private var disposables = CompositeDisposable()
     
     init(viewModel vm: PostsListViewModel) {
         viewModel = vm
         dataSource = PostsListCollectionNodeDataSource(viewModel: vm)
         shouldThrottleWhilePerformingUpdates = MutableProperty(false)
-        (performUpdatesSignal, performUpdatesObserver) = Signal<PostsListViewModelState.VMSharedState.DataSource, NoError>.pipe()
+        (performUpdatesSignal, performUpdatesObserver) = Signal<PostsListViewModelState.VMSharedState.DataSource, Never>.pipe()
         
         let rootNode = PostListNode(viewModel: vm)
         super.init(node: rootNode)

@@ -11,7 +11,7 @@ import Quick
 import Nimble
 import SwiftyMocky
 import ReactiveSwift
-import enum Result.NoError
+import Result
 
 @testable import IRShowcase
 
@@ -51,7 +51,7 @@ class PostDetailsViewModelTests: QuickSpec {
             context("viewDidLoad") {
                 it("should get local post after calling viewDidLoad (does a local fetch) on the happy path") {
                     Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(true)))
-                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, NoError>({ (observer, _) in
+                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, Never>({ (observer, _) in
                         observer.send(value: ConnectivityServiceStatus.connected)
                     })))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
@@ -88,7 +88,7 @@ class PostDetailsViewModelTests: QuickSpec {
                 
                 it("should return error after calling viewDidLoad if theres no data") {
                     Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(true)))
-                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, NoError>({ (observer, _) in
+                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, Never>({ (observer, _) in
                         observer.send(value: ConnectivityServiceStatus.connected)
                     })))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
@@ -130,7 +130,7 @@ class PostDetailsViewModelTests: QuickSpec {
             context("viewDidAppear") {
                 it("should get remote post after calling viewDidAppear (does a config fetch) on the happy path") {
                     Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(true)))
-                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, NoError>({ (observer, _) in
+                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, Never>({ (observer, _) in
                         observer.send(value: ConnectivityServiceStatus.connected)
                     })))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
@@ -182,7 +182,7 @@ class PostDetailsViewModelTests: QuickSpec {
                 
                 it("should get local post after calling viewDidAppear (does a config fetch) when the network fails") {
                     Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(true)))
-                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, NoError>({ (observer, _) in
+                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, Never>({ (observer, _) in
                         observer.send(value: ConnectivityServiceStatus.connected)
                     })))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
@@ -224,7 +224,7 @@ class PostDetailsViewModelTests: QuickSpec {
             context("pulled down to refresh") {
                 it("should call fetched stuff on the happy path") {
                     Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(true)))
-                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, NoError>({ (observer, _) in
+                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, Never>({ (observer, _) in
                         observer.send(value: ConnectivityServiceStatus.connected)
                     })))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
@@ -263,7 +263,7 @@ class PostDetailsViewModelTests: QuickSpec {
                 
                 it("should call fetched stuff with results when theres no connectivity") {
                     Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(false)))
-                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, NoError>({ (observer, _) in
+                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, Never>({ (observer, _) in
                         observer.send(value: ConnectivityServiceStatus.notConnected)
                     })))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
@@ -290,7 +290,7 @@ class PostDetailsViewModelTests: QuickSpec {
                 
                 it("should still call fetched stuff when theres an error on the network") {
                     Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(false)))
-                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, NoError>({ (observer, _) in
+                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, Never>({ (observer, _) in
                         observer.send(value: ConnectivityServiceStatus.connected)
                     })))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))
@@ -317,7 +317,7 @@ class PostDetailsViewModelTests: QuickSpec {
                 
                 it("should still call fetched stuff when theres an error on both layers") {
                     Given(connectivity, .isReachableProperty(getter: MutableProperty<Bool>(false)))
-                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, NoError>({ (observer, _) in
+                    Given(connectivity, .performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, Never>({ (observer, _) in
                         observer.send(value: ConnectivityServiceStatus.connected)
                     })))
                     Given(network, .buildUrlRequest(resource: .any, willReturn: Resource.posts.buildUrlRequest(apiBaseUrl: URL(string: "https://fake.com")!)))

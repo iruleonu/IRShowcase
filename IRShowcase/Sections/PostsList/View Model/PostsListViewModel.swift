@@ -8,8 +8,6 @@
 
 import Foundation
 import ReactiveSwift
-import enum Result.Result
-import enum Result.NoError
 import Connectivity
 
 enum PostsListViewModelError: Error {
@@ -35,8 +33,8 @@ protocol PostsListViewModelInputs {
 }
 
 protocol PostsListViewModelOutputs {
-    var fetchedStuff: Signal<Result<[Post], PostsListViewModelError>, NoError> { get }
-    var dataSourceChanges: Signal<PostsListViewModelState.VMSharedState.DataSource, NoError> { get }
+    var fetchedStuff: Signal<Result<[Post], PostsListViewModelError>, Never> { get }
+    var dataSourceChanges: Signal<PostsListViewModelState.VMSharedState.DataSource, Never> { get }
 }
 
 protocol PostsListViewModel: PostsListCollectionNodeDataSourceProtocol {
@@ -57,10 +55,10 @@ final class PostsListViewModelImpl: PostsListViewModel, PostsListViewModelInputs
     private let fetchStuffProperty: MutableProperty<Resource>
     
     var outputs: PostsListViewModelOutputs { return self }
-    var fetchedStuff: Signal<Result<[Post], PostsListViewModelError>, NoError>
-    private var fetchedStuffObserver: Signal<Result<[Post], PostsListViewModelError>, NoError>.Observer
-    var dataSourceChanges: Signal<PostsListViewModelState.VMSharedState.DataSource, NoError>
-    private let dataSourceChangesObserver: Signal<PostsListViewModelState.VMSharedState.DataSource, NoError>.Observer
+    var fetchedStuff: Signal<Result<[Post], PostsListViewModelError>, Never>
+    private var fetchedStuffObserver: Signal<Result<[Post], PostsListViewModelError>, Never>.Observer
+    var dataSourceChanges: Signal<PostsListViewModelState.VMSharedState.DataSource, Never>
+    private let dataSourceChangesObserver: Signal<PostsListViewModelState.VMSharedState.DataSource, Never>.Observer
 
     let fetchStuffAction: Action<Resource, [([Post], DataProviderSource)], DataProviderError>
     
@@ -78,8 +76,8 @@ final class PostsListViewModelImpl: PostsListViewModel, PostsListViewModelInputs
         viewDidLoadProperty = MutableProperty(())
         fetchStuffProperty = MutableProperty(Resource.unknown)
         
-        (fetchedStuff, fetchedStuffObserver) = Signal<Result<[Post], PostsListViewModelError>, NoError>.pipe()
-        (dataSourceChanges, dataSourceChangesObserver) = Signal<PostsListViewModelState.VMSharedState.DataSource, NoError>.pipe()
+        (fetchedStuff, fetchedStuffObserver) = Signal<Result<[Post], PostsListViewModelError>, Never>.pipe()
+        (dataSourceChanges, dataSourceChangesObserver) = Signal<PostsListViewModelState.VMSharedState.DataSource, Never>.pipe()
         
         fetchStuffAction = Action { PostsListViewModelImpl.fetchStuffHandler($0, localDataProvider: ldp, remoteDataProvider: rdp) }
         

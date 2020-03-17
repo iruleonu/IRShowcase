@@ -9,14 +9,12 @@
 import Foundation
 import Connectivity
 import ReactiveSwift
-import enum Result.Result
-import enum Result.NoError
 
 //sourcery: AutoMockable
 protocol ConnectivityService {
     var status: MutableProperty<ConnectivityServiceStatus> { get }
     var isReachableProperty: MutableProperty<Bool> { get }
-    func performSingleConnectivityCheck() -> SignalProducer<ConnectivityServiceStatus, NoError>
+    func performSingleConnectivityCheck() -> SignalProducer<ConnectivityServiceStatus, Never>
 }
 
 enum ConnectivityServiceStatus: CustomStringConvertible {
@@ -63,12 +61,15 @@ class ConnectivityServiceImpl: ConnectivityService {
         setupConnectivityUrl()
         startConnectivityObserver()
         
-        performConnectivityCheck(connectivity: connectivity).startWithValues { [weak self] (status) in
-            self?.updateConnectionStatus(status)
+        performConnectivityCheck(connectivity: connectivity).startWithResult { [weak self] (result) in
+            switch result {
+            case .success(let status):
+                self?.updateConnectionStatus(status)
+            }
         }
     }
     
-    func performSingleConnectivityCheck() -> SignalProducer<ConnectivityServiceStatus, NoError> {
+    func performSingleConnectivityCheck() -> SignalProducer<ConnectivityServiceStatus, Never> {
         return performConnectivityCheck(connectivity: connectivity).map({ ConnectivityServiceImpl.mapConnectivityStatusToServiceConnectivityStatus($0) })
     }
     
@@ -105,7 +106,7 @@ class ConnectivityServiceImpl: ConnectivityService {
         isReachableProperty.value = isReachable
     }
     
-    private func performConnectivityCheck(connectivity: Connectivity) -> SignalProducer<Connectivity.Status, NoError> {
+    private func performConnectivityCheck(connectivity: Connectivity) -> SignalProducer<Connectivity.Status, Never> {
         return SignalProducer({ (observer, _) in
             connectivity.checkConnectivity { connectivity in
                 observer.send(value: connectivity.status)
