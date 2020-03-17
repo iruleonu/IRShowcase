@@ -43,6 +43,10 @@ import SourceryRuntime
 
 // MARK: - APIService
 open class APIServiceMock: APIService, Mock {
+    public func resetMock(_ scopes: MockScope...) {
+        
+    }
+    
     init(sequencing sequencingPolicy: SequencingPolicy = .lastWrittenResolvedFirst, stubbing stubbingPolicy: StubbingPolicy = .wrap, file: StaticString = #file, line: UInt = #line) {
         self.sequencingPolicy = sequencingPolicy
         self.stubbingPolicy = stubbingPolicy
@@ -298,6 +302,10 @@ open class APIServiceMock: APIService, Mock {
 
 // MARK: - ConnectivityService
 open class ConnectivityServiceMock: ConnectivityService, Mock {
+    public func resetMock(_ scopes: MockScope...) {
+        
+    }
+    
     init(sequencing sequencingPolicy: SequencingPolicy = .lastWrittenResolvedFirst, stubbing stubbingPolicy: StubbingPolicy = .wrap, file: StaticString = #file, line: UInt = #line) {
         self.sequencingPolicy = sequencingPolicy
         self.stubbingPolicy = stubbingPolicy
@@ -342,11 +350,11 @@ open class ConnectivityServiceMock: ConnectivityService, Mock {
 
 
 
-    open func performSingleConnectivityCheck() -> SignalProducer<ConnectivityServiceStatus, NoError> {
+    open func performSingleConnectivityCheck() -> SignalProducer<ConnectivityServiceStatus, Never> {
         addInvocation(.m_performSingleConnectivityCheck)
 		let perform = methodPerformValue(.m_performSingleConnectivityCheck) as? () -> Void
 		perform?()
-		var __value: SignalProducer<ConnectivityServiceStatus, NoError>
+		var __value: SignalProducer<ConnectivityServiceStatus, Never>
 		do {
 		    __value = try methodReturnValue(.m_performSingleConnectivityCheck).casted()
 		} catch {
@@ -396,13 +404,13 @@ open class ConnectivityServiceMock: ConnectivityService, Mock {
             return Given(method: .p_isReachableProperty_get, products: defaultValue.map({ StubProduct.return($0 as Any) }))
         }
 
-        public static func performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, NoError>...) -> MethodStub {
+        public static func performSingleConnectivityCheck(willReturn: SignalProducer<ConnectivityServiceStatus, Never>...) -> MethodStub {
             return Given(method: .m_performSingleConnectivityCheck, products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
-        public static func performSingleConnectivityCheck(willProduce: (Stubber<SignalProducer<ConnectivityServiceStatus, NoError>>) -> Void) -> MethodStub {
-            let willReturn: [SignalProducer<ConnectivityServiceStatus, NoError>] = []
+        public static func performSingleConnectivityCheck(willProduce: (Stubber<SignalProducer<ConnectivityServiceStatus, Never>>) -> Void) -> MethodStub {
+            let willReturn: [SignalProducer<ConnectivityServiceStatus, Never>] = []
 			let given: Given = { return Given(method: .m_performSingleConnectivityCheck, products: willReturn.map({ StubProduct.return($0 as Any) })) }()
-			let stubber = given.stub(for: (SignalProducer<ConnectivityServiceStatus, NoError>).self)
+			let stubber = given.stub(for: (SignalProducer<ConnectivityServiceStatus, Never>).self)
 			willProduce(stubber)
 			return given
         }
@@ -483,6 +491,10 @@ open class ConnectivityServiceMock: ConnectivityService, Mock {
 
 // MARK: - PersistenceLayer
 open class PersistenceLayerMock: PersistenceLayer, Mock {
+    public func resetMock(_ scopes: MockScope...) {
+        
+    }
+    
     init(sequencing sequencingPolicy: SequencingPolicy = .lastWrittenResolvedFirst, stubbing stubbingPolicy: StubbingPolicy = .wrap, file: StaticString = #file, line: UInt = #line) {
         self.sequencingPolicy = sequencingPolicy
         self.stubbingPolicy = stubbingPolicy
@@ -690,6 +702,10 @@ open class PersistenceLayerMock: PersistenceLayer, Mock {
 
 // MARK: - PostDetailsRouting
 open class PostDetailsRoutingMock: PostDetailsRouting, Mock {
+    public func resetMock(_ scopes: MockScope...) {
+        
+    }
+    
     init(sequencing sequencingPolicy: SequencingPolicy = .lastWrittenResolvedFirst, stubbing stubbingPolicy: StubbingPolicy = .wrap, file: StaticString = #file, line: UInt = #line) {
         self.sequencingPolicy = sequencingPolicy
         self.stubbingPolicy = stubbingPolicy
@@ -806,6 +822,10 @@ open class PostDetailsRoutingMock: PostDetailsRouting, Mock {
 
 // MARK: - PostsListRouting
 open class PostsListRoutingMock: PostsListRouting, Mock {
+    public func resetMock(_ scopes: MockScope...) {
+        
+    }
+    
     init(sequencing sequencingPolicy: SequencingPolicy = .lastWrittenResolvedFirst, stubbing stubbingPolicy: StubbingPolicy = .wrap, file: StaticString = #file, line: UInt = #line) {
         self.sequencingPolicy = sequencingPolicy
         self.stubbingPolicy = stubbingPolicy

@@ -8,8 +8,6 @@
 
 import Foundation
 import ReactiveSwift
-import enum Result.Result
-import enum Result.NoError
 
 enum PostDetailsViewModelError: Error {
     case unknown
@@ -34,8 +32,8 @@ protocol PostDetailsViewModelInputs {
 
 protocol PostDetailsViewModelOutputs {
     typealias FetchedStuffTuple = (Post?, User?, [Comment]?)
-    var fetchedStuff: Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, NoError> { get }
-    var dataSourceChanges: Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError> { get }
+    var fetchedStuff: Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, Never> { get }
+    var dataSourceChanges: Signal<PostDetailsViewModelState.VMSharedState.DataSource, Never> { get }
 }
 
 protocol PostDetailsViewModel: PostDetailsCollectionNodeDataSourceProtocol {
@@ -62,10 +60,10 @@ final class PostDetailsViewModelImpl: PostDetailsViewModel, PostDetailsViewModel
     private let fetchStuffProperty: MutableProperty<DataProviderFetchType>
     
     var outputs: PostDetailsViewModelOutputs { return self }
-    var fetchedStuff: Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, NoError>
-    private let fetchedStuffObserver: Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, NoError>.Observer
-    var dataSourceChanges: Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError>
-    private let dataSourceChangesObserver: Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError>.Observer
+    var fetchedStuff: Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, Never>
+    private let fetchedStuffObserver: Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, Never>.Observer
+    var dataSourceChanges: Signal<PostDetailsViewModelState.VMSharedState.DataSource, Never>
+    private let dataSourceChangesObserver: Signal<PostDetailsViewModelState.VMSharedState.DataSource, Never>.Observer
     
     let fetchPostAction: Action<(Int, DataProviderFetchType), ([Post], DataProviderSource, DataProviderFetchType), DataProviderError>
     let fetchCommentsAction: Action<(Int, DataProviderFetchType), ([Comment], DataProviderSource, DataProviderFetchType), DataProviderError>
@@ -87,8 +85,8 @@ final class PostDetailsViewModelImpl: PostDetailsViewModel, PostDetailsViewModel
         viewDidLoadProperty = MutableProperty(())
         fetchStuffProperty = MutableProperty(DataProviderFetchType.config)
         
-        (fetchedStuff, fetchedStuffObserver) = Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, NoError>.pipe()
-        (dataSourceChanges, dataSourceChangesObserver) = Signal<PostDetailsViewModelState.VMSharedState.DataSource, NoError>.pipe()
+        (fetchedStuff, fetchedStuffObserver) = Signal<Result<FetchedStuffTuple, PostDetailsViewModelError>, Never>.pipe()
+        (dataSourceChanges, dataSourceChangesObserver) = Signal<PostDetailsViewModelState.VMSharedState.DataSource, Never>.pipe()
         
         fetchPostAction = Action { PostDetailsViewModelImpl.fetchPostHandler(postId: $0.0, fetchType: $0.1, postDataProvider: pdp) }
         fetchCommentsAction = Action { PostDetailsViewModelImpl.fetchCommentsHandler(postId: $0.0, fetchType: $0.1, commentsDataProvider: cdp) }
